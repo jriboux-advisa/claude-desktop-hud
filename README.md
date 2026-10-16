@@ -30,7 +30,7 @@ Testé sous Linux.
 Dans un terminal, pas dans Desktop :
 
 ```bash
-claude plugin install desktop-hud --marketplace jriboux-advisa/claude-desktop-hud
+claude plugin install desktop-hud --marketplace https://github.com/jriboux-advisa/claude-desktop-hud.git
 ```
 
 Puis, dans Desktop, ouvre une nouvelle session, ou tape `/reload-plugins` dans une session ouverte. Les limites et les tokens apparaissent après le premier échange de la session.
