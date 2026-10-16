@@ -150,6 +150,8 @@ export const formatTokens = (n: number) =>
 
 export const formatMoney = (amount: number, currency = 'USD') => `${amount.toFixed(2).replace('.', ',')} ${CURRENCY_SYMBOLS[currency] ?? currency}`
 
+export const truncate = (t: string, max: number) => (t.length > max ? `${t.slice(0, max)}...` : t)
+
 export const register: Register = on => {
   let tick: { cancel: () => void } | undefined
 
@@ -197,7 +199,7 @@ export const register: Register = on => {
       return tileSvg('EXTRA', [pct(percent)], { gauge: percent, below: `${money(x.usedCents)} / ${money(x.limitCents)}` })
     }
     const branch: Span[] = [
-      ...(s.branch ? [{ text: `⎇ ${s.branch}` }] : []),
+      ...(s.branch ? [{ text: `⎇ ${truncate(s.branch, 12)}` }] : []),
       ...(s.isDirty ? [{ text: '●', color: GAUGE_COLORS.warning, gap: 4 }] : []),
     ]
 

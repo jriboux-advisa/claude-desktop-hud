@@ -1,6 +1,6 @@
 {
   "name": "desktop-hud",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Bandeau façon claude-hud pour Claude Desktop : projet/branche, limites 5h/7j, extra, tokens et durée de session",
   "types": "./types/index.d.ts",
   "author": {

@@ -1,6 +1,6 @@
 import { expect, mock, test } from 'claude-code/testing'
 
-import { escapeXml, formatDuration, formatMoney, formatTokens, parseExtraUsage, parseGitStatus, tileSvg, totalTokens } from '../hooks/register'
+import { escapeXml, formatDuration, formatMoney, formatTokens, parseExtraUsage, parseGitStatus, tileSvg, totalTokens, truncate } from '../hooks/register'
 
 const BAND = {
   plugin: 'desktop-hud',
@@ -22,6 +22,8 @@ test('helpers', async () => {
   expect(formatTokens(1_250_000)).toBe('1,3 M')
   expect(formatTokens(900)).toBe('900')
   expect(escapeXml('a&b<c>"d')).toBe('a&#38;b&#60;c&#62;&#34;d')
+  expect(truncate('feature/abcd', 12)).toBe('feature/abcd')
+  expect(truncate('feature/abcde', 12)).toBe('feature/abcd...')
   expect(parseExtraUsage('{"extra_usage":{"is_enabled":true,"monthly_limit":5000,"used_credits":1234,"utilization":24.68,"currency":"eur"}}'))
     .toEqual({ isEnabled: true, usedCents: 1234, limitCents: 5000, percent: 24.68, currency: 'EUR' })
   expect(parseExtraUsage('{"extra_usage":{"is_enabled":false,"monthly_limit":null,"used_credits":null,"utilization":null}}'))

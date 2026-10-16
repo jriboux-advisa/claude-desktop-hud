@@ -10,7 +10,7 @@ projet       ━─── 25 %      ━━━━ 88 %      ━━── 25 %    
 
 | Tuile | Contenu |
 | --- | --- |
-| **PROJET** | Dossier de la session, branche git, `●` s'il y a des modifications non commitées |
+| **PROJET** | Dossier de la session, branche git (tronquée au-delà de 12 caractères), `●` s'il y a des modifications non commitées |
 | **LIMITE 5 H / 7 J** | Consommation des limites de l'abonnement, et temps restant avant leur réinitialisation |
 | **EXTRA** | Hors forfait (crédits d'usage) : montant consommé / plafond mensuel, ou « désactivé » |
 | **SESSION** | Tokens cumulés (entrée, sortie et cache, sous-agents compris) et durée de la session |
