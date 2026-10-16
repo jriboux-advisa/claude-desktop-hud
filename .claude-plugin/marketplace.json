@@ -1,0 +1,15 @@
+{
+  "name": "desktop-hud",
+  "description": "Marketplace local : bandeau façon claude-hud pour Claude Desktop.",
+  "owner": {
+    "name": "jriboux",
+    "email": "jriboux@advisa.fr"
+  },
+  "plugins": [
+    {
+      "name": "desktop-hud",
+      "source": "./",
+      "description": "Bandeau façon claude-hud pour Claude Desktop : projet/branche, limites 5h/7j, extra, tokens et durée de session."
+    }
+  ]
+}

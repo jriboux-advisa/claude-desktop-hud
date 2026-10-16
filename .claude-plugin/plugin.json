@@ -1,0 +1,10 @@
+{
+  "name": "desktop-hud",
+  "version": "0.1.0",
+  "description": "Bandeau façon claude-hud pour Claude Desktop : projet/branche, limites 5h/7j, extra, tokens et durée de session",
+  "types": "./types/index.d.ts",
+  "author": {
+    "name": "jriboux",
+    "email": "jriboux@advisa.fr"
+  }
+}
