@@ -3,9 +3,9 @@
 Bandeau pour l'onglet **Code** de Claude Desktop, dans l'esprit de la statusline [claude-hud](https://github.com/jarrodwatts/claude-hud) du terminal. Il s'affiche au-dessus de la zone de saisie :
 
 ```
-PROJET             LIMITE 5 H     LIMITE 7 J     EXTRA                 SESSION
-projet ⎇ main ●    ━─── 25 %      ━━━━ 88 %      ━━── 25 %             1,3 M tokens · 45 min
-                   ↻ 1 h 30       ↻ 3 j          12,34 € / 50,00 €
+PROJET       LIMITE 5 H     LIMITE 7 J     EXTRA                 SESSION
+projet       ━─── 25 %      ━━━━ 88 %      ━━── 25 %             1,3 M tokens
+⎇ main ●     ↻ 1 h 30       ↻ 3 j          12,34 € / 50,00 €     45 min
 ```
 
 | Tuile | Contenu |

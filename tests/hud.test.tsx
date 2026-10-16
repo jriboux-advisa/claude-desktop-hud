@@ -36,7 +36,7 @@ test('tuile SVG : petite police, jauge, détail dessous', async () => {
   expect(gauge.source).toContain('font-size="9.5"')
   expect(gauge.source).toContain('font-size="11.5"')
   expect(gauge.source).toContain('<rect y="18.5" width="12" height="5" rx="2.5" fill="#2da44e"/>')
-  expect(gauge.source).toContain('>↻ 1 h 30</text>')
+  expect(gauge.source).toContain('>↻ 1 h 30</tspan></text>')
   expect(gauge.alt).toBe('LIMITE 5 H 25 % ↻ 1 h 30')
 
   const empty = tileSvg('LIMITE 7 J', [{ text: '0 %' }], { gauge: 0 })
@@ -44,6 +44,12 @@ test('tuile SVG : petite police, jauge, détail dessous', async () => {
   expect(empty.source).not.toContain('fill="#2da44e"')
 
   expect(tileSvg('PROJET', [{ text: 'a&b' }]).source).toContain('a&#38;b')
+
+  // Détail en spans : le ● garde sa couleur.
+  const project = tileSvg('PROJET', [{ text: 'projet' }], { below: [{ text: '⎇ main' }, { text: '●', color: '#d29922', gap: 4 }] })
+  expect(project.height).toBe(44)
+  expect(project.source).toContain('<tspan dx="4" fill="#d29922">●</tspan></text>')
+  expect(project.alt).toBe('PROJET projet ⎇ main ●')
 })
 
 test('bandeau sur desktop, rien sur le terminal', async ($, on) => {
@@ -82,8 +88,10 @@ test('bandeau sur desktop, rien sur le terminal', async ($, on) => {
   expect(fetched).toEqual([{ url: 'https://api.anthropic.com/api/oauth/usage', auth: 'poignee' }])
   const svgs = await desktop.findAll({ type: 'Svg' })
   expect(svgs).toHaveLength(5)
+  // PROJET et SESSION sur trois lignes, comme les limites (7 J n'a pas d'échéance ici).
+  expect(svgs.map(svg => svg.props.height)).toEqual([44, 44, 30, 44, 44])
   const drawn = svgs.map(svg => String(svg.props.source)).join('\n')
-  for (const text of ['PROJET', 'projet', '⎇ main', '●', 'LIMITE 5 H', '25 %', '↻ 1 h 30', 'LIMITE 7 J', '88 %', 'EXTRA', '12,34 € / 50,00 €', 'SESSION', '1,3 M tokens · 45 min']) {
+  for (const text of ['PROJET', 'projet', '⎇ main', '●', 'LIMITE 5 H', '25 %', '↻ 1 h 30', 'LIMITE 7 J', '88 %', 'EXTRA', '12,34 € / 50,00 €', 'SESSION', '>1,3 M tokens<', '>45 min<']) {
     expect({ text, found: drawn.includes(text) }).toEqual({ text, found: true })
   }
   expect(drawn).not.toContain('$')

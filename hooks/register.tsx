@@ -107,23 +107,25 @@ const gaugeRects = (percent: number, y: number) => {
 }
 
 // Une tuile : libellé discret, ligne de valeur (précédée d'une jauge si `gauge`), détail discret dessous.
-export const tileSvg = (label: string, value: Span[], opts: { gauge?: number; below?: string } = {}) => {
+export const tileSvg = (label: string, value: Span[], opts: { gauge?: number; below?: string | Span[] } = {}) => {
   const lead = opts.gauge === undefined ? 0 : GAUGE_WIDTH + 6
+  const below = typeof opts.below === 'string' ? [{ text: opts.below }] : opts.below
   const width =
-    Math.ceil(Math.max(textWidth(label, SIZE.label) + label.length * 0.5, lead + spansWidth(value, SIZE.value), opts.below ? textWidth(opts.below, SIZE.below) : 0)) + 2
-  const height = opts.below ? 44 : 30
-  const tspans = value
-    .map(v => `<tspan${v.gap ? ` dx="${v.gap}"` : ''} fill="${v.color ?? GRAY}"${v.isBold ? ' font-weight="600"' : ''}>${escapeXml(v.text)}</tspan>`)
-    .join('')
+    Math.ceil(Math.max(textWidth(label, SIZE.label) + label.length * 0.5, lead + spansWidth(value, SIZE.value), below ? spansWidth(below, SIZE.below) : 0)) + 2
+  const height = below ? 44 : 30
+  const tspans = (parts: Span[]) =>
+    parts
+      .map(v => `<tspan${v.gap ? ` dx="${v.gap}"` : ''} fill="${v.color ?? GRAY}"${v.isBold ? ' font-weight="600"' : ''}>${escapeXml(v.text)}</tspan>`)
+      .join('')
   const body = [
     `<text y="9" font-size="${SIZE.label}" letter-spacing="0.5" fill="${GRAY}">${escapeXml(label)}</text>`,
     opts.gauge === undefined ? '' : gaugeRects(opts.gauge, 18.5),
-    `<text x="${lead}" y="25" font-size="${SIZE.value}">${tspans}</text>`,
-    opts.below ? `<text y="40" font-size="${SIZE.below}" fill="${GRAY}">${escapeXml(opts.below)}</text>` : '',
+    `<text x="${lead}" y="25" font-size="${SIZE.value}">${tspans(value)}</text>`,
+    below ? `<text y="40" font-size="${SIZE.below}">${tspans(below)}</text>` : '',
   ].join('')
   return {
     source: `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" font-family="${FONT}">${body}</svg>`,
-    alt: [label, ...value.map(v => v.text), opts.below].filter(Boolean).join(' '),
+    alt: [label, ...value.map(v => v.text), ...(below ?? []).map(v => v.text)].filter(Boolean).join(' '),
     width,
     height,
   }
@@ -194,19 +196,19 @@ export const register: Register = on => {
       const percent = x.percent ?? (x.limitCents > 0 ? ((x.usedCents ?? 0) / x.limitCents) * 100 : 0)
       return tileSvg('EXTRA', [pct(percent)], { gauge: percent, below: `${money(x.usedCents)} / ${money(x.limitCents)}` })
     }
-    const project = (name: string): Span[] => [
-      { text: name },
-      ...(s.branch ? [{ text: `⎇ ${s.branch}`, gap: 6 }] : []),
+    const branch: Span[] = [
+      ...(s.branch ? [{ text: `⎇ ${s.branch}` }] : []),
       ...(s.isDirty ? [{ text: '●', color: GAUGE_COLORS.warning, gap: 4 }] : []),
     ]
 
-    const session = [s.tokens !== undefined ? `${formatTokens(s.tokens)} tokens` : null, s.startedAt !== undefined && s.now > 0 ? formatDuration(s.now - s.startedAt) : null]
-      .filter(Boolean)
-      .join(' · ')
+    const [sessionValue, sessionBelow] = [
+      s.tokens !== undefined ? `${formatTokens(s.tokens)} tokens` : null,
+      s.startedAt !== undefined && s.now > 0 ? formatDuration(s.now - s.startedAt) : null,
+    ].filter((t): t is string => t !== null)
 
     return (
       <Box flexDirection="row" flexWrap="wrap" columnGap={3} rowGap={1}>
-        {s.project ? draw('project', tileSvg('PROJET', project(s.project))) : null}
+        {s.project ? draw('project', tileSvg('PROJET', [{ text: s.project }], { below: branch.length > 0 ? branch : undefined })) : null}
         {s.limits.map(l =>
           draw(
             l.kind,
@@ -217,7 +219,7 @@ export const register: Register = on => {
           ),
         )}
         {s.extra ? draw('extra', extraTile(s.extra)) : null}
-        {session ? draw('session', tileSvg('SESSION', [{ text: session }])) : null}
+        {sessionValue ? draw('session', tileSvg('SESSION', [{ text: sessionValue }], { below: sessionBelow })) : null}
       </Box>
     )
   })
